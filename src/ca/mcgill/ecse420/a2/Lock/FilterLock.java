@@ -1,9 +1,10 @@
 package ca.mcgill.ecse420.a2.Lock;
 
+import java.util.Random;
+
 import ca.mcgill.ecse420.a2.ThreadId.ThreadID;
 
 public class FilterLock implements Lock {
-
 	private int n;
 	private volatile int[] threadLevels; // keeps track of the level
 	private volatile int[] victim;

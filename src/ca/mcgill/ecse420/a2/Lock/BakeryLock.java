@@ -1,9 +1,6 @@
-package ca.mcgill.ecse420.a2;
+package ca.mcgill.ecse420.a2.Lock;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import ca.mcgill.ecse420.a2.ThreadId.ThreadID;
 
 public class BakeryLock implements Lock{
 
@@ -20,12 +17,13 @@ public class BakeryLock implements Lock{
 		}
 	}
 	
-	public void lock(int id) {
+	public void lock() {
+		int id = ThreadID.get();
 		int max = 0;
 		this.flag[id] = true;
 		max = this.getMax(this.number) + 1;
 		number[id] = max;
-		System.out.println("In lock id:" + id + ", max: " + max);
+		//System.out.println("In lock id:" + id + ", max: " + max);
 		this.flag[id] = false;
 		
 		for(int i = 0; i < number.length; i++){
@@ -41,7 +39,8 @@ public class BakeryLock implements Lock{
 	}
 	
 	
-	public void unlock(int id) {
+	public void unlock() {
+		int id = ThreadID.get();
 		number[id] = 0;
 	}
 	
@@ -55,18 +54,4 @@ public class BakeryLock implements Lock{
 		return max;
 	}
 
-
-
-	@Override
-	public void lock() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void unlock() {
-		// TODO Auto-generated method stub
-		
-	}
 }
