@@ -1,70 +1,66 @@
 package ca.mcgill.ecse420.a2;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
+import java.util.function.Supplier;
 import ca.mcgill.ecse420.a2.Lock.BakeryLock;
 import ca.mcgill.ecse420.a2.Lock.FilterLock;
 import ca.mcgill.ecse420.a2.Lock.Lock;
-import ca.mcgill.ecse420.a2.ThreadId.ThreadID;
 
 public class LockTester {
-	static int globalIndex;
 
-	public static void main(String[] args) {
+	static int globalIndex = 1;
+	static int numberOfThreads;
+	static final int INCREMENTS_PER_THREADS = 15;
+	static final int WAITING_MS_BOUND = 100;
 
-		int numberOfThreads = 5;
+	/*
+	 * Function that takes the constructor of a runnable, create some and test if
+	 * it's works in parallel.
+	 */
+	public static boolean testFunction(Supplier<Runnable> incrementRunnable, String runnableMethod) {
 
-		ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
-		globalIndex = 1;
-		System.out.println("Unsafe method");
-		for (int i = 0; i < numberOfThreads; i++) {
-			executor.execute(new UnsafeIncrementTask());
-		}
-
-		executor.shutdown();
-		try {
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS); // wait for it to finish
-		} catch (InterruptedException e) {
-
-		}
-
-		System.out.println("Expected output : " + (numberOfThreads * 10 + 1));
-		System.out.println("Obtained output: " + globalIndex);
-		System.out.println();
-		System.out.println("--------------------------------------");
-		System.out.println();
-		System.out.println();
-		System.out.println("Safe method with FilterLock");
-		Lock lockFilter = new BakeryLock(numberOfThreads);
-		ThreadID.reset();
+		Thread[] pool = new Thread[numberOfThreads];
 		globalIndex = 1;
 
-		// ExecutorService executor2 = Executors.newFixedThreadPool(numberOfThreads);
-		Thread[] pool2 = new Thread[numberOfThreads];
-		globalIndex = 1;
-		for (int i = 0; i < numberOfThreads; i++) {
-			// executor2.execute(new SafeIncrementTask(lockFilter));
-			pool2[i] = new Thread(new SafeIncrementTask(lockFilter));
-			pool2[i].start();
+		System.out.println();
+		System.out.println();
+		System.out.println(runnableMethod);
+
+		for (int i = 0; i < numberOfThreads; i++) {// Creates the thread and start them
+			pool[i] = new Thread(incrementRunnable.get());
+			pool[i].start();
 		}
 
-		// executor2.shutdown();
-		for (int i = 0; i < numberOfThreads; i++) {
+		for (Thread thread : pool) { // Wait for everyone to finish
 			try {
-				pool2[i].join();
+				thread.join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
-		System.out.println("Expected output : " + (numberOfThreads * 20 + 1));
+		int expectedOutput = numberOfThreads * INCREMENTS_PER_THREADS + 1;
+
+		System.out.println("Expected output : " + expectedOutput);
 		System.out.println("Obtained output: " + globalIndex);
 		System.out.println();
 		System.out.println("--------------------------------------");
-		System.out.println();
+
+		return expectedOutput == globalIndex;
+	}
+
+	public static void main(String[] args) {
+
+		numberOfThreads = 3;
+		//First test the increment without locking to ensure that we can get race conditions
+		testFunction(() -> new UnSafeIncrementTask(), "Unsafe methode");
+		//Test with the FilterLock implementation
+		Lock filterLock = new FilterLock(numberOfThreads);
+		testFunction(() -> new SafeIncrementTask(filterLock), "Safe method with FilterLock");
+		//Test with the BakeryLock implementation
+		Lock bakeryLock = new BakeryLock(numberOfThreads);
+		testFunction(() -> new SafeIncrementTask(bakeryLock), "Safe method with BakeryLock");
+
 	}
 
 }

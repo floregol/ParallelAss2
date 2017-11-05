@@ -1,7 +1,5 @@
 package ca.mcgill.ecse420.a2.Lock;
 
-import java.util.Random;
-
 import ca.mcgill.ecse420.a2.ThreadId.ThreadID;
 
 public class FilterLock implements Lock {
@@ -35,11 +33,7 @@ public class FilterLock implements Lock {
 		int thisThreadLevel = threadLevels[thisThreadID];
 		for (int id = 0; id < n; id++) {
 			if (id != thisThreadID) {
-				if (threadLevels[id] > thisThreadLevel) {
-					return true;
-
-				} else if (threadLevels[id] == thisThreadLevel && id < thisThreadID) {
-
+				if (threadLevels[id] >= thisThreadLevel) {
 					return true;
 				}
 
