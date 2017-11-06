@@ -7,18 +7,16 @@ public class UnSafeIncrementTask implements Runnable {
 
 	@Override
 	public void run() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < LockTester.incrementsPerThreads; i++) {
 			LockTester.globalIndex++;
 			// To help quickly see where the global Index is
 			System.out.println(String.format("%" + LockTester.globalIndex + "s", "") + "|");
-			//Wait for a random amount of time
 			try {
-				Thread.sleep(rand.nextInt(LockTester.WAITING_MS_BOUND));
+				Thread.sleep(rand.nextInt(3));
 			} catch (InterruptedException e) {
 				System.out.println("Didn't work");
 				e.printStackTrace();
 			}
-
 		}
 
 	}

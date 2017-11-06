@@ -14,7 +14,7 @@ public class SafeIncrementTask implements Runnable {
 
 	@Override
 	public void run() {
-		for (int i = 0; i < LockTester.INCREMENTS_PER_THREADS; i++) {
+		for (int i = 0; i < LockTester.incrementsPerThreads; i++) {
 			lock.lock();
 			LockTester.globalIndex++;
 			// To help quickly see where the global Index is
