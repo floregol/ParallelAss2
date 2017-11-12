@@ -20,22 +20,22 @@ public class BakeryLock implements Lock {
 	public void lock() {
 		int id = ThreadID.get();
 		int max = 0;
-		this.flag[id] = true;
-		max = this.getMax(this.number) + 1;
+		flag[id] = true; // signal that this thread is interested to acquire the lock
+		max = this.getMax(number) + 1; //
 		number[id] = max;
-		// System.out.println("In lock id:" + id + ", max: " + max);
-		this.flag[id] = false;
+
+		flag[id] = false;
 
 		for (int i = 0; i < number.length; i++) {
 			if (i == id) {
-				continue;
+				continue; // skip ourself
 			}
-			// Wait for thread that's being set
-			while (this.flag[i]) {
-			}
+			 while (flag[i]) {
+			 // Wait for thread that's being set
+			 }
 			// Wait for thread with smaller number or with smaller pid
-			while (this.number[i] != 0
-					&& (this.number[i] < this.number[id] || this.number[i] == this.number[id] && i < id)) {
+			while (number[i] != 0 && (number[i] < number[id] || number[i] == number[id] && i < id)) {
+				// System.out.println("stuck");
 			}
 		}
 

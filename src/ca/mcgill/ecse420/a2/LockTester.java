@@ -1,6 +1,8 @@
 package ca.mcgill.ecse420.a2;
 
 import java.util.function.Supplier;
+
+import ca.mcgill.ecse420.a2.Lock.BadLock;
 import ca.mcgill.ecse420.a2.Lock.BakeryLock;
 import ca.mcgill.ecse420.a2.Lock.FilterLock;
 import ca.mcgill.ecse420.a2.Lock.Lock;
@@ -9,7 +11,7 @@ import ca.mcgill.ecse420.a2.ThreadId.ThreadID;
 public class LockTester {
 
 	static int globalIndex = 1;
-	static int numberOfThreads = 2; // default value
+	static int numberOfThreads = 3; // default value
 	static int incrementsPerThreads = 10; // default value
 	static final int WAITING_MS_BOUND = 100;
 
@@ -63,7 +65,8 @@ public class LockTester {
 				+ " per thread with " + numberOfThreads + " threads.");
 		// First test the increment without locking to ensure that we can get race
 		// conditions
-		testFunction(() -> new UnSafeIncrementTask(), "Unsafe methode");
+		Lock badLock = new BadLock();
+		testFunction(() -> new SafeIncrementTask(badLock), "Unsafe methode");
 		// Test with the FilterLock implementation
 		Lock filterLock = new FilterLock(numberOfThreads);
 		testFunction(() -> new SafeIncrementTask(filterLock), "Safe method with FilterLock");

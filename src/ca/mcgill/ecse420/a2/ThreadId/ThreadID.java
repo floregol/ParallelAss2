@@ -1,5 +1,6 @@
 package ca.mcgill.ecse420.a2.ThreadId;
 
+//Downloaded from mycourses
 public class ThreadID {
 
 	private static volatile int currentID = 0;
