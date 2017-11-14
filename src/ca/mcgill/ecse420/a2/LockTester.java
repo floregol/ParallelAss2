@@ -66,7 +66,7 @@ public class LockTester {
 		// First test the increment without locking to ensure that we can get race
 		// conditions
 		Lock badLock = new BadLock();
-		testFunction(() -> new SafeIncrementTask(badLock), "Unsafe methode");
+		testFunction(() -> new SafeIncrementTask(badLock), "Unsafe method");
 		// Test with the FilterLock implementation
 		Lock filterLock = new FilterLock(numberOfThreads);
 		testFunction(() -> new SafeIncrementTask(filterLock), "Safe method with FilterLock");

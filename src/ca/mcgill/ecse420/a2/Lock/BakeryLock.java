@@ -30,15 +30,14 @@ public class BakeryLock implements Lock {
 			if (i == id) {
 				continue; // skip ourself
 			}
-			 while (flag[i]) {
-			 // Wait for thread that's being set
-			 }
+			// Wait for thread that's being set
+			while (flag[i]) {
+			}
 			// Wait for thread with smaller number or with smaller pid
 			while (number[i] != 0 && (number[i] < number[id] || number[i] == number[id] && i < id)) {
 				// System.out.println("stuck");
 			}
 		}
-
 	}
 
 	public void unlock() {
@@ -55,5 +54,4 @@ public class BakeryLock implements Lock {
 		}
 		return max;
 	}
-
 }
